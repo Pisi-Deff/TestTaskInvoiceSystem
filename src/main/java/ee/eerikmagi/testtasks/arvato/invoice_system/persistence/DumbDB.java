@@ -1,6 +1,6 @@
 package ee.eerikmagi.testtasks.arvato.invoice_system.persistence;
 
-import java.time.Month;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Customer;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.CustomerType;
+import ee.eerikmagi.testtasks.arvato.invoice_system.model.Invoice;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.ParkingHouse;
 
@@ -32,6 +33,7 @@ public class DumbDB {
 				.setName("Hoban Washburne Memorial Parking House"));
 	}
 	private static final Map<Long, List<Parking>> customerParkings = new HashMap<>();
+	private static final Map<Long, Map<YearMonth, Invoice>> invoices = new HashMap<>();
 	
 	public static Customer getCustomer(long id) {
 		return customers.get(id);
@@ -56,10 +58,10 @@ public class DumbDB {
 		return Collections.emptyList();
 	}
 	
-	public static List<Parking> getCustomerParkingsForMonth(long customerID, long year, Month month) {
+	public static List<Parking> getCustomerParkingsForMonth(long customerID, YearMonth ym) {
 		List<Parking> parkings = getCustomerParkings(customerID);
 		return parkings.stream()
-			.filter((p) -> month.equals(p.getEndDateTime().getMonth()) && year == p.getEndDateTime().getYear())
+			.filter((p) -> ym.equals(YearMonth.of(p.getEndDateTime().getYear(), p.getEndDateTime().getMonth())))
 			.collect(Collectors.toList());
 	}
 	
@@ -80,5 +82,29 @@ public class DumbDB {
 				.sorted(Collections.reverseOrder())
 				.limit(10)
 				.collect(Collectors.toList());
+	}
+	
+	public static Map<YearMonth, Invoice> getCustomerInvoices(long customerID) {
+		if (invoices.containsKey(customerID)) {
+			return invoices.get(customerID);
+		}
+		
+		return Collections.emptyMap();
+	}
+	
+	public static Invoice getCustomerInvoice(long customerID, YearMonth ym) {
+		return getCustomerInvoices(customerID).get(ym);
+	}
+	
+	public static void setInvoice(long customerID, YearMonth ym, Invoice i) {
+		Map<YearMonth, Invoice> m;
+		if (invoices.containsKey(customerID)) {
+			m = invoices.get(customerID);
+		} else {
+			m = new HashMap<>();
+			invoices.put(customerID, m);
+		}
+		
+		m.put(ym, i);
 	}
 }

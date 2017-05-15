@@ -12,7 +12,20 @@
 		Total times parked: ${totalParkings}<br />
 	
 		<h3>Invoices</h3>
-		<@dateForm id="invoices" />
+		<form id="invoices" autocomplete="off">
+			<select name="ym">
+				<option value="" selected disabled>- Select invoice -</option>
+				<#list invoiceYMs as ym>
+					<option value="${ym.year?c}-${ym.monthValue?c}">${ym.year?c}-${ym.monthValue?c}</option>
+				</#list>
+			</select>
+			<button type="submit">Go</button>
+		</form>
+		
+		<br />
+		<form action="./${selectedCustomerID}/genInvoices" method="GET">
+			<button type="submit">Generate Invoices</button>
+		</form>
 		
 		<h3>Parkings</h3>
 		<@dateForm id="parkings" />
@@ -36,9 +49,10 @@
 				$('#invoices').submit((ev) => {
 					ev.preventDefault();
 					const form = $('#invoices').serializeArray().reduce((o, el) => {o[el.name] = el.value; return o;}, {});
-					if (form.year && form.month) {
+					if (form.ym) {
+						const [y, m] = form.ym.split('-');
 						let newURL = document.location.href.substring(0, document.location.href.indexOf('invoice_system') + 'invoice_system'.length);
-						newURL += '/${selectedCustomerID}/invoice/' + form.year + '/' + form.month;
+						newURL += '/${selectedCustomerID}/invoice/' + y + '/' + m;
 						
 						document.location.href = newURL;
 					}
@@ -59,7 +73,7 @@
 </@page>
 
 <#macro dateForm id>
-	<form method="post" action="#" id="${id}">
+	<form method="post" action="#" id="${id}" autocomplete="off">
 		<label>
 			Year
 			<select name="year">

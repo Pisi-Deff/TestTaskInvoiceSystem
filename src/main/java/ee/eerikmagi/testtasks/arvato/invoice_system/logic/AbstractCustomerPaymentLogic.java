@@ -2,6 +2,7 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.logic;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +19,7 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 	private static final int TIMEUNIT_MINUTES = 30;
 
 	@Override
-	public Invoice calculateInvoice(Customer customer, List<Parking> parkings) {
+	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym) {
 		List<InvoiceEntry> entries = new ArrayList<>();
 		
 		parkings.stream().forEach((p) -> entries.add(getParkingEntry(p)));
@@ -30,7 +31,8 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 		Invoice inv = new Invoice()
 			.setEntries(entries)
 			.setTotal(total)
-			.setFinalSum(total);
+			.setFinalSum(total)
+			.setIncomplete(isCurrentMonth(ym));
 		
 		return inv;
 	}
@@ -89,6 +91,10 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 	
 	protected boolean isCheapTime(LocalDateTime dt) {
 		return dt.getHour() < HOUR_EXPENSIVE_TIME_START || dt.getHour() >= HOUR_EXPENSIVE_TIME_END;
+	}
+	
+	protected boolean isCurrentMonth(YearMonth ym) {
+		return YearMonth.now().equals(ym);
 	}
 	
 	abstract protected BigDecimal getTimeUnitCost(LocalDateTime dateTime);

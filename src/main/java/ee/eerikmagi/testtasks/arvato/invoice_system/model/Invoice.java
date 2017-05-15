@@ -7,6 +7,7 @@ public class Invoice {
 	private List<InvoiceEntry> entries;
 	private BigDecimal total;
 	private BigDecimal finalSum;
+	private boolean incomplete;
 	
 	public List<InvoiceEntry> getEntries() {
 		return entries;
@@ -29,6 +30,14 @@ public class Invoice {
 	}
 	public Invoice setFinalSum(BigDecimal finalSum) {
 		this.finalSum = finalSum;
+		return this;
+	}
+	
+	public boolean isIncomplete() {
+		return incomplete;
+	}
+	public Invoice setIncomplete(boolean incomplete) {
+		this.incomplete = incomplete;
 		return this;
 	}
 }

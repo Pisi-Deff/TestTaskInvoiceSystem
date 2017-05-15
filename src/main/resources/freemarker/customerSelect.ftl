@@ -1,7 +1,7 @@
 <#macro customerSelect>
 	<label>
 		Select customer:
-		<select id="customerSelect">
+		<select id="customerSelect" autocomplete="off">
 			<option value="" <#if selectedCustomerID??><#else>selected</#if>>- Select Customer -</option>
 			<#list customers as id, c>
 				<option value="${id}" <#if selectedCustomerID?? && selectedCustomerID == id>selected</#if>>${c.name}</option>

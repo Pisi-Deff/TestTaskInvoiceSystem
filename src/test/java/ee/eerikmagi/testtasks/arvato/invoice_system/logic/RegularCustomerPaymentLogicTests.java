@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +36,22 @@ public class RegularCustomerPaymentLogicTests {
 			.setName("Ultimate Parking House 5000");
 		parkings = new ArrayList<>();
 	}
+	
+	@Test
+	public void testIncompleteInvoice() {
+		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.now());
+		assertTrue(i.isIncomplete());
+	}
 
 	@Test
 	public void testCheapTimeCost() {
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 4, 8, 15))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 4, 8, 16))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 4, 8, 15))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 4, 8, 16))
 		);
 		
-		Invoice i = logic.calculateInvoice(customer, parkings);
+		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 1);
 		assertEquals(i.getEntries().get(0).getParkingSpans().size(), 1);
 		assertEquals(i.getEntries().get(0).getCost(), i.getTotal());
@@ -58,11 +65,11 @@ public class RegularCustomerPaymentLogicTests {
 	public void testExpensiveTimeCost() {
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 16, 23, 42))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 16, 23, 43))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 16, 23, 42))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 16, 23, 43))
 		);
 		
-		Invoice i = logic.calculateInvoice(customer, parkings);
+		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 1);
 		assertEquals(i.getEntries().get(0).getParkingSpans().size(), 1);
 		assertEquals(i.getEntries().get(0).getCost(), i.getTotal());
@@ -76,25 +83,25 @@ public class RegularCustomerPaymentLogicTests {
 	public void testMultiSpanParkingSplitting() {
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 6, 23, 42))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 20, 23, 43))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 6, 23, 42))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 20, 23, 43))
 		);
 		
-		Invoice i = logic.calculateInvoice(customer, parkings);
+		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 1);
 		InvoiceEntry e = i.getEntries().get(0);
 		assertEquals(e.getParkingSpans().size(), 3);
 		
 		InvoiceParking p0 = e.getParkingSpans().get(0);
 		assertEquals(p0.getParking().getStartDateTime(), parkings.get(0).getStartDateTime());
-		assertEquals(p0.getParking().getEndDateTime(), LocalDateTime.of(2017, 5, 10, 7, 23, 42));
+		assertEquals(p0.getParking().getEndDateTime(), LocalDateTime.of(2017, 4, 10, 7, 23, 42));
 		assertEquals(p0.getTimeUnitCost(), RegularCustomerPaymentLogic.TIMEUNIT_COST_CHEAP);
 		InvoiceParking p1 = e.getParkingSpans().get(1);
-		assertEquals(p1.getParking().getStartDateTime(), LocalDateTime.of(2017, 5, 10, 7, 23, 42));
-		assertEquals(p1.getParking().getEndDateTime(), LocalDateTime.of(2017, 5, 10, 19, 23, 42));
+		assertEquals(p1.getParking().getStartDateTime(), LocalDateTime.of(2017, 4, 10, 7, 23, 42));
+		assertEquals(p1.getParking().getEndDateTime(), LocalDateTime.of(2017, 4, 10, 19, 23, 42));
 		assertEquals(p1.getTimeUnitCost(), RegularCustomerPaymentLogic.TIMEUNIT_COST_EXPENSIVE);
 		InvoiceParking p2 = e.getParkingSpans().get(2);
-		assertEquals(p2.getParking().getStartDateTime(), LocalDateTime.of(2017, 5, 10, 19, 23, 42));
+		assertEquals(p2.getParking().getStartDateTime(), LocalDateTime.of(2017, 4, 10, 19, 23, 42));
 		assertEquals(p2.getParking().getEndDateTime(), parkings.get(0).getEndDateTime());
 		assertEquals(p2.getTimeUnitCost(), RegularCustomerPaymentLogic.TIMEUNIT_COST_CHEAP);
 		
@@ -117,21 +124,21 @@ public class RegularCustomerPaymentLogicTests {
 	public void testMultipleParkings() {
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 4, 8, 15))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 4, 8, 16))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 4, 8, 15))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 4, 8, 16))
 		);
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 16, 23, 42))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 16, 23, 43))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 16, 23, 42))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 16, 23, 43))
 		);
 		parkings.add(new Parking()
 			.setParkingHouse(parkingHouse)
-			.setStartDateTime(LocalDateTime.of(2017, 5, 10, 6, 23, 42))
-			.setEndDateTime(LocalDateTime.of(2017, 5, 10, 20, 23, 43))
+			.setStartDateTime(LocalDateTime.of(2017, 4, 10, 6, 23, 42))
+			.setEndDateTime(LocalDateTime.of(2017, 4, 10, 20, 23, 43))
 		);
 		
-		Invoice i = logic.calculateInvoice(customer, parkings);
+		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 3);
 		for (InvoiceEntry e : i.getEntries()) {
 			assertEquals(e.getType(), InvoiceEntryType.PARKING);

@@ -8,6 +8,7 @@ public class InvoiceEntry {
 	private List<InvoiceParking> parkingSpans;
 	private BigDecimal cost;
 	private InvoiceEntryType type;
+	private String comment;
 	
 	public Parking getParking() {
 		return parking;
@@ -38,6 +39,14 @@ public class InvoiceEntry {
 	}
 	public InvoiceEntry setType(InvoiceEntryType type) {
 		this.type = type;
+		return this;
+	}
+	
+	public String getComment() {
+		return this.comment;
+	}
+	public InvoiceEntry setComment(String comment) {
+		this.comment = comment;
 		return this;
 	}
 }

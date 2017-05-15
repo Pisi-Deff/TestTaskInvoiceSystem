@@ -1,7 +1,7 @@
 <#include "page.ftl" />
 
 <@page title="Invoice">
-	<h3>Invoice for ${month} ${year?c}</h3>
+	<h3>Invoice for ${month} ${year?c}<#if invoice.incomplete> (<strong>INCOMPLETE</strong>)</#if></h3>
 	<p>
 		Customer: ${customer.name}
 	</p>
@@ -14,7 +14,7 @@
 		<#list invoice.entries as e>
 			<tr>
 				<td>
-					${e.type}
+					<strong>${e.type}</strong>
 					<#if e.type.name() == "PARKING">
 						<br />
 						(
@@ -31,11 +31,29 @@
 									<li>
 										${ps.parking.startDateTime.format(dtFormatter)}
 										-
-										${ps.parking.endDateTime.format(dtFormatter)}
+										${ps.parking.endDateTime.format(dtFormatter)}:
+										&nbsp;
+										${ps.timeUnitCost} per ${ps.timeUnitMinutes} minutes
+										<strong>*</strong>
+										${ps.timeUnitsCount} counts
+										=
+										<strong>${ps.cost}</strong>
 									</li>
 								</#list>
 							</ul>
+						<#else>
+							<br />
+							${e.parkingSpans[0].timeUnitCost} per
+							${e.parkingSpans[0].timeUnitMinutes} minutes
+							<strong>*</strong>
+							${e.parkingSpans[0].timeUnitsCount} counts
+							=
+							<strong>${e.parkingSpans[0].cost}</strong>
 						</#if>
+					</#if>
+					<#if e.comment?has_content>
+						<br />
+						(${e.comment})
 					</#if>
 				</td>
 				<td>${e.cost}</td>
@@ -43,8 +61,13 @@
 		</#list>
 	</table>
 	
-	<p>Total: ${invoice.total?c}</p>
-	<p>Final Sum: ${invoice.finalSum?c}</p>
+	<h4>Total: ${invoice.total}</h4>
+	<h4>Final Sum: ${invoice.finalSum}</h4>
+	
+	<#if invoice.incomplete>
+		<strong>NOTE:</strong>
+		This invoice is incomplete because when it was generated the month had not yet ended.
+	</#if>
 	
 	<style>
 		table {

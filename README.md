@@ -10,7 +10,7 @@ Run via command line: `mvn clean install jetty:run`
 
 Then visit [localhost:8080/invoice_system](http://localhost:8080/invoice_system)
 
-Note: There are currently 2 hardcoded customers and 1 hardcoded parking house. There is currently no API to add additional ones of either.
+Note: There are currently 2 hardcoded customers (0 and 1) and 1 hardcoded parking house (0). There is currently no API to add additional ones of either.
 
 ### REST api
 

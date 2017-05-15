@@ -12,7 +12,7 @@ Then visit [localhost:8080/invoice_system](http://localhost:8080/invoice_system)
 
 Note: There are currently 2 hardcoded customers (0 and 1) and 1 hardcoded parking house (0). There is currently no API to add additional ones of either.
 
-### REST api
+### REST api (json)
 
 #### Add parking
 

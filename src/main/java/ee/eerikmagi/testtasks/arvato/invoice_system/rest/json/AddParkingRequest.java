@@ -2,6 +2,9 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.rest.json;
 
 import javax.validation.constraints.NotNull;
 
+/**
+ * Request object for the Add Parking REST API request.
+ */
 public class AddParkingRequest {
 	@NotNull
 	private Long customerID;

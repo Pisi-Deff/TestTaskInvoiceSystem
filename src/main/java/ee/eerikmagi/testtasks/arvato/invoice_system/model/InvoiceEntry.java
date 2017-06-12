@@ -3,6 +3,11 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * A single entry on the invoice.
+ * 
+ * Contains a type, a cost, optionally a comment, and optionally parking details if it's a parking type entry.
+ */
 public class InvoiceEntry {
 	private Parking parking;
 	private List<InvoiceParking> parkingSpans;

@@ -3,6 +3,9 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+/**
+ * Holds all data needed to render an invoice for the customer.
+ */
 public class Invoice {
 	private List<InvoiceEntry> entries;
 	private BigDecimal total;

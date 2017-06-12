@@ -28,8 +28,14 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.Invoice;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 import ee.eerikmagi.testtasks.arvato.invoice_system.persistence.DumbDB;
 
+/**
+ * Resource that handles requests related to the website part of the application.
+ */
 @Path("")
 public class IndexResource {
+	/**
+	 * Renders the index page when a customer is not chosen.
+	 */
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public Viewable index() {
@@ -40,6 +46,9 @@ public class IndexResource {
 		return new Viewable("/index.ftl", context);
 	}
 	
+	/**
+	 * Renders the index page with a customer chosen.
+	 */
 	@GET
 	@Path("{customerID}")
 	@Produces(MediaType.TEXT_HTML)
@@ -58,6 +67,9 @@ public class IndexResource {
 		return new Viewable("/index.ftl", context);
 	}
 	
+	/**
+	 * Renders a specific year and month's invoice for a specific customer.
+	 */
 	@GET
 	@Path("{customerID}/invoice/{year}/{month}")
 	@Produces(MediaType.TEXT_HTML)
@@ -85,12 +97,17 @@ public class IndexResource {
 		return new Viewable("/invoice.ftl", context);
 	}
 	
+	/**
+	 * Generates all possible invoices for the customer.
+	 */
 	@GET
 	@Path("{customerID}/genInvoices")
 	public Response generateInvoices(
 		@PathParam("customerID") long customerID
-	) { // don't care about performance right now
+	) {
 		Set<YearMonth> yms = new HashSet<>();
+		
+		// don't care about performance right now, just go through everything
 		List<Parking> allParkings = DumbDB.getCustomerParkings(customerID);
 		Map<YearMonth, Invoice> invoices = DumbDB.getCustomerInvoices(customerID);
 		Customer c = DumbDB.getCustomer(customerID);
@@ -112,6 +129,9 @@ public class IndexResource {
 		return Response.seeOther(UriBuilder.fromMethod(IndexResource.class, "indexWithCustomer").build(Long.valueOf(customerID))).build();
 	}
 	
+	/**
+	 * Renders a page listing all parkings for a customer for a year and month.
+	 */
 	@GET
 	@Path("{customerID}/parkings/{year}/{month}")
 	@Produces(MediaType.TEXT_HTML)

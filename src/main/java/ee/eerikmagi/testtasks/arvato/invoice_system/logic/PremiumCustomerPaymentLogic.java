@@ -12,6 +12,9 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.InvoiceEntry;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.InvoiceEntryType;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 
+/**
+ * Payment logic implementation for premium customers.
+ */
 public class PremiumCustomerPaymentLogic extends AbstractCustomerPaymentLogic {
 	public static final BigDecimal COST_MAX_MONTHLY = BigDecimal.valueOf(300).setScale(2);
 	public static final BigDecimal COST_MONTHLY_FEE = BigDecimal.valueOf(20).setScale(2);
@@ -22,7 +25,18 @@ public class PremiumCustomerPaymentLogic extends AbstractCustomerPaymentLogic {
 	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym, LocalDateTime dt) {
 		Invoice invoice = super.calculateInvoice(customer, parkings, ym, dt);
 		
-		InvoiceEntry monthlyFeeEntry = new InvoiceEntry();
+		InvoiceEntry monthlyFeeEntry = createMonthlyFeeEntry(ym, dt);
+		invoice.getEntries().add(0, monthlyFeeEntry);
+		invoice.setTotal(invoice.getTotal().add(monthlyFeeEntry.getCost()));
+		
+		invoice.setFinalSum(invoice.getTotal().min(COST_MAX_MONTHLY));
+		
+		return invoice;
+	}
+
+	private InvoiceEntry createMonthlyFeeEntry(YearMonth ym, LocalDateTime dt) {
+		InvoiceEntry monthlyFeeEntry = new InvoiceEntry()
+			.setType(InvoiceEntryType.MONTHLY_FEE);
 
 		BigDecimal cost = COST_MONTHLY_FEE;
 		if (isCurrentMonth(dt, ym)) {
@@ -35,15 +49,7 @@ public class PremiumCustomerPaymentLogic extends AbstractCustomerPaymentLogic {
 			monthlyFeeEntry.setComment("for " + dt.getDayOfMonth() + " out of " + monthDays + " days");
 		}
 		
-		invoice.getEntries().add(0, monthlyFeeEntry
-			.setCost(cost)
-			.setType(InvoiceEntryType.MONTHLY_FEE)
-		);
-		
-		invoice.setTotal(invoice.getTotal().add(cost));
-		invoice.setFinalSum(invoice.getTotal().min(COST_MAX_MONTHLY));
-		
-		return invoice;
+		return monthlyFeeEntry.setCost(cost);
 	}
 
 	@Override

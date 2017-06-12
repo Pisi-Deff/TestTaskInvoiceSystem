@@ -2,6 +2,9 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 
 import java.time.LocalDateTime;
 
+/**
+ * A single record of parking that is tied to a specific parking house and has start and end dates.
+ */
 public class Parking implements Comparable<Parking> {
 	private ParkingHouse parkingHouse;
 	private LocalDateTime startDateTime;

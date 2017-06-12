@@ -18,6 +18,9 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.rest.json.AddParkingRequest;
 import ee.eerikmagi.testtasks.arvato.invoice_system.rest.json.DateObj;
 import ee.eerikmagi.testtasks.arvato.invoice_system.rest.json.JsonResponse;
 
+/**
+ * REST API for interacting with the application automatically.
+ */
 @Path("api")
 public class APIResource {
 	@Path("addParking")

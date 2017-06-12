@@ -13,6 +13,11 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.InvoiceEntryType;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.InvoiceParking;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 
+/**
+ * Abstract base class for customer payment logic.
+ * 
+ * Contains logic that is shared between {@link RegularCustomerPaymentLogic} and {@link PremiumCustomerPaymentLogic}
+ */
 public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 	private static final int HOUR_EXPENSIVE_TIME_END = 19;
 	private static final int HOUR_EXPENSIVE_TIME_START = 7;
@@ -42,6 +47,13 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 		return inv;
 	}
 
+	/**
+	 * Creates an {@link InvoiceEntry} based on the provided {@link Parking} object.
+	 * Calculates the spans and costs of that parking.
+	 * 
+	 * @param parking The parking object to handle.
+	 * @return The invoice entry for the given parking object.
+	 */
 	protected InvoiceEntry getParkingEntry(Parking parking) {
 		List<InvoiceParking> parkings = new ArrayList<>();
 		
@@ -51,6 +63,8 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 		LocalDateTime cursor = start;
 		long ipTimeUnitsCount = 0;
 		
+		// go through the time difference in TIMEUNIT_MINUTES chunks and split it into spans if
+		// the parking goes through a cheap-expensive time change
 		while (cursor.isBefore(end)) {
 			ipTimeUnitsCount++;
 			
@@ -103,6 +117,9 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 		return YearMonth.from(dt).equals(ym);
 	}
 	
+	/**
+	 * Returns the cost per time unit at the provided time. 
+	 */
 	abstract protected BigDecimal getTimeUnitCost(LocalDateTime dateTime);
 
 }

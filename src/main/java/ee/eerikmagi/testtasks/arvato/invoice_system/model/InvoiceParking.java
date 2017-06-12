@@ -2,6 +2,10 @@ package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 
 import java.math.BigDecimal;
 
+/**
+ * A single span of parking listed on the {@link Invoice}.
+ * A single parking record may be split into multiple invoice parking entries.
+ */
 public class InvoiceParking {
 	private Parking parking;
 	private long timeUnitsCount;

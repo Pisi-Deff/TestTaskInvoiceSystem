@@ -4,6 +4,9 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * An easily (de-)serializable POJO for a full date without having to deal with Jackson-Java8 magic.
+ */
 public class DateObj {
 	@NotNull
 	@Min(2000)

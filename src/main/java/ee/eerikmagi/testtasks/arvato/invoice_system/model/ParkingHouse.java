@@ -1,5 +1,8 @@
 package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 
+/**
+ * A parking house.
+ */
 public class ParkingHouse {
 	private String name;
 

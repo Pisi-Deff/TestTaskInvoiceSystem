@@ -16,6 +16,8 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.ParkingHouse;
 
 /**
  * Minimum effort "database".
+ * 
+ * All data is stored in memory and stored/retrieved with zero thought on performance.
  */
 public class DumbDB {
 	private static final Map<Long, Customer> customers = new HashMap<>();

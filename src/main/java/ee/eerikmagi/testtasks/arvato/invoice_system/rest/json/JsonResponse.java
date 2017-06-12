@@ -1,5 +1,8 @@
 package ee.eerikmagi.testtasks.arvato.invoice_system.rest.json;
 
+/**
+ * A simple class for a JSON response for REST API requests.
+ */
 public class JsonResponse {
 	private boolean success;
 

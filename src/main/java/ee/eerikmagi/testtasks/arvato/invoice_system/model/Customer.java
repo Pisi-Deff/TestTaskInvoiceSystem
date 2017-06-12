@@ -1,5 +1,8 @@
 package ee.eerikmagi.testtasks.arvato.invoice_system.model;
 
+/**
+ * A single customer.
+ */
 public class Customer {
 	private String name;
 	private CustomerType type;

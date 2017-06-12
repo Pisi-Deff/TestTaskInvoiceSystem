@@ -62,9 +62,9 @@ public class ExamplePaymentLogicTests {
 		
 		Invoice i = regularLogic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 2);
-		assertEquals(BigDecimal.valueOf(9).compareTo(i.getEntries().get(0).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(2).compareTo(i.getEntries().get(1).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(11).compareTo(i.getFinalSum()), 0);
+		assertEquals(i.getEntries().get(0).getCost(), BigDecimal.valueOf(9).setScale(2));
+		assertEquals(i.getEntries().get(1).getCost(), BigDecimal.valueOf(2).setScale(2));
+		assertEquals(i.getFinalSum(), BigDecimal.valueOf(11).setScale(2));
 	}
 
 	/*
@@ -104,13 +104,13 @@ public class ExamplePaymentLogicTests {
 		
 		Invoice i = premiumLogic.calculateInvoice(customer, parkings, YearMonth.of(2017, 4));
 		assertEquals(i.getEntries().size(), 5);
-		assertEquals(BigDecimal.valueOf(20).compareTo(i.getEntries().get(0).getCost()), 0);
+		assertEquals(i.getEntries().get(0).getCost(), BigDecimal.valueOf(20).setScale(2));
 		assertEquals(i.getEntries().get(0).getType(), InvoiceEntryType.MONTHLY_FEE);
-		assertEquals(BigDecimal.valueOf(6).compareTo(i.getEntries().get(1).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(10).compareTo(i.getEntries().get(2).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(75, 2).compareTo(i.getEntries().get(3).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(150, 2).compareTo(i.getEntries().get(4).getCost()), 0);
-		assertEquals(BigDecimal.valueOf(3825, 2).compareTo(i.getFinalSum()), 0);
+		assertEquals(i.getEntries().get(1).getCost(), BigDecimal.valueOf(6).setScale(2));
+		assertEquals(i.getEntries().get(2).getCost(), BigDecimal.valueOf(10).setScale(2));
+		assertEquals(i.getEntries().get(3).getCost(), BigDecimal.valueOf(75, 2));
+		assertEquals(i.getEntries().get(4).getCost(), BigDecimal.valueOf(150, 2));
+		assertEquals(i.getFinalSum(), BigDecimal.valueOf(3825, 2));
 	}
 
 }

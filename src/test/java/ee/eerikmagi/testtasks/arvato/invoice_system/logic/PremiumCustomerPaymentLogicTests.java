@@ -53,6 +53,60 @@ public class PremiumCustomerPaymentLogicTests {
 	}
 	
 	@Test
+	public void testQuarterMonthlyFee() {
+		// abusing the fact that february's 28 days divide into 4 nicely
+		YearMonth ym = YearMonth.of(2017, 2);
+		Invoice i = logic.calculateInvoice(customer, parkings, ym, LocalDateTime.of(2017, 2, 7, 0, 0, 0));
+		
+		assertEquals(i.getEntries().size(), 1);
+		InvoiceEntry e = i.getEntries().get(0);
+		BigDecimal quarterMonthFee = PremiumCustomerPaymentLogic.COST_MONTHLY_FEE.divide(BigDecimal.valueOf(4));
+		
+		assertEquals(e.getCost(), quarterMonthFee);
+		assertEquals(e.getType(), InvoiceEntryType.MONTHLY_FEE);
+		assertNull(e.getParking());
+		assertNull(e.getParkingSpans());
+		
+		assertEquals(i.getTotal(), quarterMonthFee);
+		checkFinalSum(i);
+	}
+	
+	@Test
+	public void testHalfMonthlyFee() {
+		YearMonth ym = YearMonth.of(2017, 4);
+		Invoice i = logic.calculateInvoice(customer, parkings, ym, LocalDateTime.of(2017, 4, 15, 0, 0, 0));
+		
+		assertEquals(i.getEntries().size(), 1);
+		InvoiceEntry e = i.getEntries().get(0);
+		BigDecimal halfMonthFee = PremiumCustomerPaymentLogic.COST_MONTHLY_FEE.divide(BigDecimal.valueOf(2));
+		
+		assertEquals(e.getCost(), halfMonthFee);
+		assertEquals(e.getType(), InvoiceEntryType.MONTHLY_FEE);
+		assertNull(e.getParking());
+		assertNull(e.getParkingSpans());
+		
+		assertEquals(i.getTotal(), halfMonthFee);
+		checkFinalSum(i);
+	}
+	
+	@Test
+	public void testLastDayOfMonthMonthlyFee() {
+		YearMonth ym = YearMonth.of(2017, 4);
+		Invoice i = logic.calculateInvoice(customer, parkings, ym, LocalDateTime.of(2017, 4, 30, 0, 0, 0));
+		
+		assertEquals(i.getEntries().size(), 1);
+		InvoiceEntry e = i.getEntries().get(0);
+		
+		assertEquals(e.getCost(), PremiumCustomerPaymentLogic.COST_MONTHLY_FEE);
+		assertEquals(e.getType(), InvoiceEntryType.MONTHLY_FEE);
+		assertNull(e.getParking());
+		assertNull(e.getParkingSpans());
+		
+		assertEquals(i.getTotal(), PremiumCustomerPaymentLogic.COST_MONTHLY_FEE);
+		checkFinalSum(i);
+	}
+	
+	@Test
 	public void testIncompleteInvoice() {
 		Invoice i = logic.calculateInvoice(customer, parkings, YearMonth.now());
 		assertTrue(i.isIncomplete());

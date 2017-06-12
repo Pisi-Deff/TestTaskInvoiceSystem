@@ -1,5 +1,6 @@
 package ee.eerikmagi.testtasks.arvato.invoice_system.logic;
 
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.List;
 
@@ -9,4 +10,5 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 
 public interface IPaymentLogic {
 	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym);
+	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym, LocalDateTime dt);
 }

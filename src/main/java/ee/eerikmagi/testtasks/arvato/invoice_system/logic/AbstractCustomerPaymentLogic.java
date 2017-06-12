@@ -17,9 +17,14 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 	private static final int HOUR_EXPENSIVE_TIME_END = 19;
 	private static final int HOUR_EXPENSIVE_TIME_START = 7;
 	private static final int TIMEUNIT_MINUTES = 30;
-
+	
 	@Override
 	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym) {
+		return calculateInvoice(customer, parkings, ym, LocalDateTime.now());
+	}
+
+	@Override
+	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym, LocalDateTime dt) {
 		List<InvoiceEntry> entries = new ArrayList<>();
 		
 		parkings.stream().forEach((p) -> entries.add(getParkingEntry(p)));
@@ -32,7 +37,7 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 			.setEntries(entries)
 			.setTotal(total)
 			.setFinalSum(total)
-			.setIncomplete(isCurrentMonth(ym));
+			.setIncomplete(isCurrentMonth(dt, ym));
 		
 		return inv;
 	}
@@ -66,7 +71,8 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 			.setType(InvoiceEntryType.PARKING)
 			.setCost(parkings.stream()
 				.map((p) -> p.getCost())
-				.reduce(BigDecimal.ZERO, (tot, cost) -> tot.add(cost)));
+				.reduce(BigDecimal.ZERO, (tot, cost) -> tot.add(cost))
+				.setScale(2));
 	}
 
 	protected boolean hasTimerangeChanged(LocalDateTime cursor, LocalDateTime next) {
@@ -93,8 +99,8 @@ public abstract class AbstractCustomerPaymentLogic implements IPaymentLogic {
 		return dt.getHour() < HOUR_EXPENSIVE_TIME_START || dt.getHour() >= HOUR_EXPENSIVE_TIME_END;
 	}
 	
-	protected boolean isCurrentMonth(YearMonth ym) {
-		return YearMonth.now().equals(ym);
+	protected boolean isCurrentMonth(LocalDateTime dt, YearMonth ym) {
+		return YearMonth.from(dt).equals(ym);
 	}
 	
 	abstract protected BigDecimal getTimeUnitCost(LocalDateTime dateTime);

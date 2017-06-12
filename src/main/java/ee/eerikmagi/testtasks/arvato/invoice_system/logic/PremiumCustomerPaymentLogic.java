@@ -13,27 +13,26 @@ import ee.eerikmagi.testtasks.arvato.invoice_system.model.InvoiceEntryType;
 import ee.eerikmagi.testtasks.arvato.invoice_system.model.Parking;
 
 public class PremiumCustomerPaymentLogic extends AbstractCustomerPaymentLogic {
-	public static final BigDecimal COST_MAX_MONTHLY = BigDecimal.valueOf(300);
-	public static final BigDecimal COST_MONTHLY_FEE = BigDecimal.valueOf(20);
+	public static final BigDecimal COST_MAX_MONTHLY = BigDecimal.valueOf(300).setScale(2);
+	public static final BigDecimal COST_MONTHLY_FEE = BigDecimal.valueOf(20).setScale(2);
 	public static final BigDecimal TIMEUNIT_COST_CHEAP = BigDecimal.valueOf(75, 2);
-	public static final BigDecimal TIMEUNIT_COST_EXPENSIVE = BigDecimal.ONE;
+	public static final BigDecimal TIMEUNIT_COST_EXPENSIVE = BigDecimal.valueOf(100, 2);
 	
 	@Override
-	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym) {
-		Invoice invoice = super.calculateInvoice(customer, parkings, ym);
+	public Invoice calculateInvoice(Customer customer, List<Parking> parkings, YearMonth ym, LocalDateTime dt) {
+		Invoice invoice = super.calculateInvoice(customer, parkings, ym, dt);
 		
 		InvoiceEntry monthlyFeeEntry = new InvoiceEntry();
 
 		BigDecimal cost = COST_MONTHLY_FEE;
-		if (isCurrentMonth(ym)) {
-			LocalDateTime now = LocalDateTime.now();
-			int monthDays = ym.getMonth().length(now.toLocalDate().isLeapYear());
+		if (isCurrentMonth(dt, ym)) {
+			int monthDays = ym.getMonth().length(dt.toLocalDate().isLeapYear());
 			
-			BigDecimal ratio = BigDecimal.valueOf(now.getDayOfMonth())
+			BigDecimal ratio = BigDecimal.valueOf(dt.getDayOfMonth())
 				.divide(BigDecimal.valueOf(monthDays), 8, RoundingMode.DOWN);
 			
 			cost = cost.multiply(ratio).setScale(2, RoundingMode.DOWN);
-			monthlyFeeEntry.setComment("for " + now.getDayOfMonth() + " out of " + monthDays + " days");
+			monthlyFeeEntry.setComment("for " + dt.getDayOfMonth() + " out of " + monthDays + " days");
 		}
 		
 		invoice.getEntries().add(0, monthlyFeeEntry

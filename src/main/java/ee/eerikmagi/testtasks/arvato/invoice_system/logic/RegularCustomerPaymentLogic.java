@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class RegularCustomerPaymentLogic extends AbstractCustomerPaymentLogic {
-	public final static BigDecimal TIMEUNIT_COST_CHEAP = BigDecimal.ONE;
+	public final static BigDecimal TIMEUNIT_COST_CHEAP = BigDecimal.valueOf(100, 2);
 	public final static BigDecimal TIMEUNIT_COST_EXPENSIVE = BigDecimal.valueOf(150, 2);
 	
 	@Override
